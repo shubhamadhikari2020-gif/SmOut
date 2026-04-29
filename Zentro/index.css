@@ -1,0 +1,252 @@
+/* SmOut Design System & Tokens - Pastel Theme */
+:root {
+    /* Color Palette - Soft Pastel Cityscape */
+    --color-bg-base: #F9ECEC; /* Very light soft pink/peach */
+    --color-bg-surface: #FFFFFF;
+    --color-bg-glass: rgba(255, 255, 255, 0.7);
+    
+    --color-primary: #2A244E; /* Deep Purple/Navy from "SmOut" text */
+    --color-primary-hover: #1f1a3a;
+    
+    --color-secondary: #FF8B70; /* Soft Peach/Orange */
+    --color-secondary-hover: #e67459;
+    
+    --color-accent: #A694C7; /* Soft Lavender */
+    
+    --color-text-primary: #2A244E;
+    --color-text-secondary: #5a507a;
+    --color-text-muted: #8c81a6;
+    
+    /* Typography */
+    --font-family: 'Outfit', sans-serif;
+    --font-script: 'Caveat', cursive;
+    
+    /* Spacing */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    
+    /* Border Radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-full: 9999px;
+
+    /* Shadows & Effects */
+    --shadow-glass: 0 8px 32px rgba(42, 36, 78, 0.08);
+    --border-glass: 1px solid rgba(255, 255, 255, 0.8);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--color-bg-base);
+    color: var(--color-text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.5;
+    background-image: 
+        radial-gradient(circle at 15% 50%, rgba(255, 139, 112, 0.15), transparent 30%),
+        radial-gradient(circle at 85% 30%, rgba(166, 148, 199, 0.2), transparent 30%);
+}
+
+#app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-xl) var(--spacing-md);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Glassmorphism Card Utility */
+.glass-card {
+    background: var(--color-bg-glass);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: var(--border-glass);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-glass);
+    padding: var(--spacing-xl);
+    transition: var(--transition-smooth);
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 255, 255, 1);
+    box-shadow: 0 12px 40px rgba(42, 36, 78, 0.12);
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    border: none;
+    outline: none;
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background: var(--color-primary);
+    color: white;
+    box-shadow: 0 4px 15px rgba(42, 36, 78, 0.2);
+}
+
+.btn-primary:hover {
+    background: var(--color-primary-hover);
+    box-shadow: 0 6px 20px rgba(42, 36, 78, 0.3);
+    transform: scale(1.02);
+}
+
+.btn-secondary {
+    background: white;
+    border: 1px solid var(--color-text-muted);
+    color: var(--color-primary);
+}
+
+.btn-secondary:hover {
+    border-color: var(--color-primary);
+    background: rgba(42, 36, 78, 0.05);
+}
+
+/* Typography Utilities */
+h1, h2, h3, h4 {
+    color: var(--color-text-primary);
+    line-height: 1.2;
+}
+
+h1 { font-size: 3rem; font-weight: 700; margin-bottom: var(--spacing-lg); }
+h2 { font-size: 2rem; font-weight: 600; margin-bottom: var(--spacing-md); }
+p { color: var(--color-text-secondary); margin-bottom: var(--spacing-md); }
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+/* Forms */
+.input-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.input-field {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(42, 36, 78, 0.1);
+    color: var(--color-text-primary);
+    font-family: var(--font-family);
+    font-size: 1rem;
+    transition: var(--transition-smooth);
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 0 3px rgba(255, 139, 112, 0.2);
+    background: white;
+}
+
+/* Navigation */
+.nav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    border-bottom: 1px solid rgba(42, 36, 78, 0.05);
+}
+
+.logo {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    cursor: pointer;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #app-container {
+        padding: var(--spacing-md) var(--spacing-sm);
+    }
+
+    h1 { font-size: 2.2rem; }
+    h2 { font-size: 1.5rem; }
+
+    .nav-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+        padding-bottom: var(--spacing-md);
+        margin-bottom: var(--spacing-md);
+    }
+
+    .nav-actions {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    /* Target inline grid layouts from JS views to stack them */
+    div[style*="grid-template-columns: 1fr 300px"],
+    div[style*="grid-template-columns: 1fr 350px"],
+    div[style*="grid-template-columns: 2fr 1fr"],
+    div[style*="grid-template-columns: 250px 1fr 300px"] {
+        grid-template-columns: 1fr !important;
+        height: auto !important;
+    }
+
+    /* For Dashboard Map View, give map a fixed height on mobile */
+    div[style*="grid-template-columns: 1fr 350px"] > div:first-child {
+        height: 400px !important;
+    }
+
+    /* For Place Cards (Mock Place Card) */
+    div[style*="display: flex; gap: 1.5rem; padding: 1.5rem;"] {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+    }
+    
+    div[style*="display: flex; justify-content: space-between; align-items: start;"] {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 0.5rem;
+    }
+
+    /* Action buttons should wrap */
+    div[style*="display: flex; gap: 0.5rem;"] {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    /* Context Bar Filters */
+    .context-bar {
+        justify-content: center;
+    }
+    .context-bar select {
+        flex-grow: 1;
+        width: 100% !important;
+    }
+}
