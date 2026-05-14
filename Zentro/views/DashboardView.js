@@ -109,16 +109,14 @@ export const DashboardView = {
                         <div class="glass-card" style="align-self: start;">
                             <h3 style="margin-bottom: 1.5rem;">Your Hangout Groups</h3>
                             <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
-                                <div style="padding: 1rem; background: rgba(42, 36, 78, 0.03); border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s;" class="hover-bg" onclick="window.navigate('groupChat', {groupId: 'g1'})">
-                                    <strong>Weekend Squad</strong> <br/>
-                                    <span style="font-size: 0.85rem; color: var(--color-text-secondary);">3 members • Deciding...</span>
-                                </div>
-                                <div style="padding: 1rem; background: rgba(42, 36, 78, 0.03); border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s;" class="hover-bg" onclick="window.navigate('groupChat', {groupId: 'g2'})">
-                                    <strong>Work Colleagues</strong> <br/>
-                                    <span style="font-size: 0.85rem; color: var(--color-text-secondary);">5 members • Finalized</span>
-                                </div>
+                                ${state.groups && state.groups.length > 0 ? state.groups.map(g => `
+                                    <div style="padding: 1rem; background: rgba(42, 36, 78, 0.03); border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s;" class="hover-bg" onclick="window.navigate('groupChat', {groupId: '${g.id}'})">
+                                        <strong>${g.name}</strong> <br/>
+                                        <span style="font-size: 0.85rem; color: var(--color-text-secondary);">${g.members.length} members</span>
+                                    </div>
+                                `).join('') : `<p style="font-size: 0.9rem; color: var(--color-text-secondary);">No groups yet. Create one!</p>`}
                             </div>
-                            <button class="btn btn-primary" style="width: 100%;">+ Create Group</button>
+                            <button class="btn btn-primary" style="width: 100%;" onclick="window.createGroup()">+ Create Group</button>
                         </div>
                     </div>
                 `;

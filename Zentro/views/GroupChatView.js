@@ -4,45 +4,16 @@ export const GroupChatView = {
     render: (container, state, data) => {
         if (!state.user) { window.navigate('onboarding'); return; }
 
-        const groupId = data?.groupId || 'g1';
-        
-        // Mock group data
-        let group;
-        if (groupId === 'g1') {
-            group = {
-                id: 'g1',
-                name: 'Weekend Squad',
-                members: [
-                    { name: state.user.name, tasteProfile: state.user.tasteProfile },
-                    { name: 'Alex', tasteProfile: { vibes: ['Lively', 'Street Food'], foods: ['Street Food'] } },
-                    { name: 'Sam', tasteProfile: { vibes: ['Aesthetic', 'Cafes'], foods: ['Cafes', 'Fine Dining'] } }
-                ],
-                chat: [
-                    { sender: 'Alex', msg: 'Where are we going this weekend?', time: '10:00 AM' },
-                    { sender: 'Sam', msg: 'I want something aesthetic.', time: '10:05 AM' },
-                    { sender: 'AI Assistant', msg: 'I am analyzing your preferences... Click "Resolve Conflict" to see top 3 picks.', time: '10:06 AM', isSystem: true }
-                ],
-                picks: []
-            };
-        } else if (groupId === 'g2') {
-            group = {
-                id: 'g2',
-                name: 'Work Colleagues',
-                members: [
-                    { name: state.user.name, tasteProfile: state.user.tasteProfile },
-                    { name: 'David', tasteProfile: { vibes: ['Quiet', 'Premium'], foods: ['Fine Dining'], budgets: ['High'] } },
-                    { name: 'Sarah', tasteProfile: { vibes: ['Aesthetic', 'Quiet'], foods: ['Cafes', 'Fine Dining'] } },
-                    { name: 'Mike', tasteProfile: { vibes: ['Chill'], foods: ['Local Cuisine'], budgets: ['Medium'] } },
-                    { name: 'Emma', tasteProfile: { vibes: ['Aesthetic', 'Premium'], foods: ['Fine Dining'], budgets: ['High'] } }
-                ],
-                chat: [
-                    { sender: 'David', msg: 'Let\'s finalize the team dinner for Friday.', time: '09:00 AM' },
-                    { sender: 'Sarah', msg: 'Needs to be somewhere quiet so we can talk.', time: '09:15 AM' },
-                    { sender: 'Mike', msg: 'And good food please. Fine dining or good local places.', time: '09:30 AM' },
-                    { sender: 'AI Assistant', msg: 'I am analyzing your preferences... Click "Resolve Conflict" to see top 3 picks.', time: '09:35 AM', isSystem: true }
-                ],
-                picks: []
-            };
+        window.currentGroupId = data?.groupId || (state.groups.length > 0 ? state.groups[0].id : null);
+        if (!window.currentGroupId) {
+            window.navigate('dashboard');
+            return;
+        }
+
+        const group = state.groups.find(g => g.id === window.currentGroupId);
+        if (!group) {
+            window.navigate('dashboard');
+            return;
         }
 
         window.resolveGroup = () => {
@@ -83,6 +54,34 @@ export const GroupChatView = {
             renderView();
         };
 
+        window.sendGroupMessage = () => {
+            const input = document.getElementById('chat-input');
+            const msg = input.value.trim();
+            if (msg) {
+                group.chat.push({ sender: state.user.name, msg: msg, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
+                input.value = '';
+                localStorage.setItem('smout_groups', JSON.stringify(state.groups));
+                renderView();
+            }
+        };
+
+        window.removeGroupMember = (memberName) => {
+            if (confirm(`Are you sure you want to remove ${memberName} from the group?`)) {
+                group.members = group.members.filter(m => m.name !== memberName);
+                group.chat.push({ sender: 'System', msg: `${memberName} was removed from the group.`, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), isSystem: true });
+                localStorage.setItem('smout_groups', JSON.stringify(state.groups));
+                renderView();
+            }
+        };
+
+        window.deleteGroup = () => {
+            if (confirm(`Are you sure you want to permanently delete "${group.name}"? This action cannot be undone.`)) {
+                state.groups = state.groups.filter(g => g.id !== group.id);
+                localStorage.setItem('smout_groups', JSON.stringify(state.groups));
+                window.navigate('dashboard');
+            }
+        };
+
         const renderView = () => {
             const inviteLink = window.location.origin + window.location.pathname + '#join?groupId=' + group.id;
 
@@ -102,22 +101,24 @@ export const GroupChatView = {
                     <!-- Left Sidebar: Groups List -->
                     <div class="glass-card" style="padding: 1rem; overflow-y: auto;">
                         <h3 style="margin-bottom: 1rem;">My Hangouts</h3>
-                        <div class="group-sidebar-item ${groupId === 'g1' ? 'active' : ''}" onclick="window.navigate('groupChat', {groupId: 'g1'})">
-                            <strong>Weekend Squad</strong> <br>
-                            <span style="font-size: 0.8rem; color: var(--color-text-secondary);">3 members</span>
-                        </div>
-                        <div class="group-sidebar-item ${groupId === 'g2' ? 'active' : ''}" onclick="window.navigate('groupChat', {groupId: 'g2'})">
-                            <strong>Work Colleagues</strong> <br>
-                            <span style="font-size: 0.8rem; color: var(--color-text-secondary);">5 members</span>
-                        </div>
-                        <button class="btn btn-secondary" style="width: 100%; margin-top: 1rem;" onclick="alert('Feature coming soon!')">+ New Group</button>
+                        ${state.groups.map(g => `
+                            <div class="group-sidebar-item ${window.currentGroupId === g.id ? 'active' : ''}" onclick="window.navigate('groupChat', {groupId: '${g.id}'})">
+                                <strong>${g.name}</strong> <br>
+                                <span style="font-size: 0.8rem; color: var(--color-text-secondary);">${g.members.length} members</span>
+                            </div>
+                        `).join('')}
+                        <button class="btn btn-secondary" style="width: 100%; margin-top: 1rem;" onclick="window.createGroup()">+ New Group</button>
                     </div>
 
                     <!-- Middle: Chat Area -->
                     <div class="glass-card" style="display: flex; flex-direction: column; padding: 0;">
-                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; position: relative;">
                             <h2 style="margin: 0;">${group.name}</h2>
-                            <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;" onclick="navigator.clipboard.writeText('${inviteLink}'); alert('Invite link copied: ${inviteLink}');">🔗 Copy Invite Link</button>
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;" onclick="navigator.clipboard.writeText('${inviteLink}'); const toast = document.getElementById('copy-toast'); toast.style.opacity = '1'; toast.style.transform = 'translateY(0)'; setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-10px)'; }, 2000);">🔗 Copy Invite Link</button>
+                                <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;" onclick="document.getElementById('group-settings-modal').style.display='flex'">⚙️ Settings</button>
+                            </div>
+                            <div id="copy-toast" style="position: absolute; right: 1.5rem; top: 3.5rem; background: var(--color-primary); color: white; padding: 0.4rem 0.8rem; border-radius: var(--radius-md); font-size: 0.8rem; font-weight: bold; opacity: 0; transform: translateY(-10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); z-index: 10;">Copied to clipboard!</div>
                         </div>
                         
                         <div id="chat-history" style="flex-grow: 1; padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; scroll-behavior: smooth;">
@@ -130,8 +131,8 @@ export const GroupChatView = {
                         </div>
 
                         <div style="padding: 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 0.5rem;">
-                            <input type="text" class="input-field" placeholder="Type a message..." style="flex-grow: 1; margin: 0;">
-                            <button class="btn btn-primary" style="padding: 0 1.5rem;">Send</button>
+                            <input type="text" id="chat-input" class="input-field" placeholder="Type a message..." style="flex-grow: 1; margin: 0;" onkeypress="if(event.key === 'Enter') window.sendGroupMessage()">
+                            <button class="btn btn-primary" style="padding: 0 1.5rem;" onclick="window.sendGroupMessage()">Send</button>
                         </div>
                     </div>
 
@@ -164,6 +165,30 @@ export const GroupChatView = {
                                 `).join('')}
                             </div>
                         `}
+                    </div>
+                </div>
+
+                <!-- Group Settings Modal -->
+                <div id="group-settings-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index: 9999; align-items: center; justify-content: center;">
+                    <div class="glass-card animate-fade-in" style="width: 100%; max-width: 450px; padding: 2rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                            <h2 style="margin: 0;">Group Settings</h2>
+                            <button class="btn" style="background: transparent; color: white; border: none; font-size: 1.2rem; cursor: pointer;" onclick="document.getElementById('group-settings-modal').style.display='none'">✕</button>
+                        </div>
+                        
+                        <h3 style="margin-bottom: 0.5rem; font-size: 1rem; color: var(--color-text-secondary);">Members (${group.members.length})</h3>
+                        <div style="background: rgba(0,0,0,0.2); border-radius: var(--radius-md); padding: 0.5rem; max-height: 200px; overflow-y: auto; margin-bottom: 1.5rem;">
+                            ${group.members.map(m => `
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <span>${m.name} ${m.name === state.user.name ? '(You)' : ''}</span>
+                                    ${m.name !== state.user.name ? `<button class="btn btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem; color: #ef4444; border-color: rgba(239, 68, 68, 0.3);" onclick="window.removeGroupMember('${m.name}')">Remove</button>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem;">
+                            <button class="btn btn-primary" style="width: 100%; background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.5);" onclick="window.deleteGroup()">🗑️ Delete Group</button>
+                        </div>
                     </div>
                 </div>
             `;

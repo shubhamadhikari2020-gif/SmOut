@@ -54,21 +54,21 @@ function navigate(viewName, data = {}) {
     state.currentView = viewName;
     const appContainer = document.getElementById('app-container');
     appContainer.innerHTML = ''; // Clear current
-    
+
     // Render navigation
     appContainer.innerHTML += `
-        <header class="nav-header animate-fade-in">
+        <header class="nav-header animate-fade-in" style="position: relative; z-index: 50;">
             <div class="logo" onclick="window.navigate('home')" style="cursor:pointer;">SmOut</div>
             <div class="nav-actions" style="display: flex; gap: 1rem; align-items: center;">
-                ${state.user && state.user.tasteProfile ? 
-                    `<button class="btn btn-secondary" onclick="window.navigate('dashboard')">Dashboard</button>
+                ${state.user && state.user.tasteProfile ?
+            `<button class="btn btn-secondary" onclick="window.navigate('dashboard')">Dashboard</button>
                      <button class="btn btn-primary" onclick="window.navigate('planner')">Smart Planner</button>
                      
                      <div style="position: relative; margin-left: 0.5rem;" id="nav-profile-container">
                          <div id="profile-icon" onclick="document.getElementById('profile-dropdown').style.display = document.getElementById('profile-dropdown').style.display === 'block' ? 'none' : 'block'" style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #ec4899); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem; cursor: pointer; box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
                              ${state.user.name ? state.user.name.charAt(0).toUpperCase() : 'G'}
                          </div>
-                         <div id="profile-dropdown" class="glass-card" style="display: none; position: absolute; top: 120%; right: 0; width: 200px; padding: 0.5rem; z-index: 1000; animation: fadeIn 0.2s ease-out; box-shadow: var(--shadow-glass);">
+                         <div id="profile-dropdown" class="glass-card" style="display: none; position: absolute; top: 120%; right: 0; width: 200px; padding: 0.5rem; z-index: 1000; animation: fadeIn 0.2s ease-out; box-shadow: var(--shadow-glass); background: white;">
                              <div style="padding: 0.5rem; border-bottom: 1px solid rgba(42,36,78,0.1); margin-bottom: 0.5rem;">
                                  <strong style="color: var(--color-text-primary); display: block;">${state.user.name || 'Guest User'}</strong>
                                  <span style="font-size: 0.75rem; color: var(--color-text-muted);">SmOut Explorer</span>
@@ -78,19 +78,32 @@ function navigate(viewName, data = {}) {
                              <button class="btn" style="width: 100%; text-align: left; padding: 0.5rem; background: transparent; color: #ef4444; border: none; cursor: pointer;" onclick="window.logoutUser()" onmouseover="this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.background='transparent'">🚪 Logout / Clear Data</button>
                          </div>
                      </div>
-                     ` : 
-                    `<button class="btn btn-primary" onclick="window.navigate('onboarding')">Get Started</button>
+                     ` :
+            `<button class="btn btn-primary" onclick="window.navigate('onboarding')">Get Started</button>
                      <button class="btn btn-secondary" onclick="window.navigate('signup')">Login to Sync</button>`
-                }
+        }
             </div>
         </header>
+
+        <!-- Global Create Group Modal -->
+        <div id="global-create-group-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index: 9999; align-items: center; justify-content: center;">
+            <div class="glass-card animate-fade-in" style="width: 100%; max-width: 400px; padding: 2rem;">
+                <h2 style="margin-top: 0;">Create New Hangout</h2>
+                <p style="color: var(--color-text-secondary); margin-bottom: 1.5rem;">Give your group a name to get started.</p>
+                <input type="text" id="global-new-group-name" class="input-field" placeholder="e.g. Weekend Squad" style="margin-bottom: 1.5rem; width: 100%;" onkeypress="if(event.key === 'Enter') window.submitCreateGroup()">
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button class="btn btn-secondary" onclick="document.getElementById('global-create-group-modal').style.display='none'">Cancel</button>
+                    <button class="btn btn-primary" onclick="window.submitCreateGroup()">Create Group</button>
+                </div>
+            </div>
+        </div>
     `;
-    
+
     // Render view
     const viewElement = document.createElement('main');
     viewElement.className = 'animate-fade-in';
     viewElement.style.animationDelay = '0.1s';
-    
+
     routes[viewName].render(viewElement, state, data);
     appContainer.appendChild(viewElement);
 }
@@ -106,6 +119,29 @@ window.logoutUser = () => {
     navigate('home');
 };
 
+window.createGroup = () => {
+    document.getElementById('global-create-group-modal').style.display = 'flex';
+    document.getElementById('global-new-group-name').value = '';
+    document.getElementById('global-new-group-name').focus();
+};
+
+window.submitCreateGroup = () => {
+    const groupName = document.getElementById('global-new-group-name').value;
+    if (groupName && groupName.trim()) {
+        const newGroup = {
+            id: 'g' + Date.now(),
+            name: groupName.trim(),
+            members: [{ name: state.user.name, tasteProfile: state.user.tasteProfile }],
+            chat: [{ sender: 'System', msg: `Welcome to ${groupName.trim()}! Share the invite link to add friends.`, time: 'Now', isSystem: true }],
+            picks: []
+        };
+        state.groups.push(newGroup);
+        localStorage.setItem('smout_groups', JSON.stringify(state.groups));
+        document.getElementById('global-create-group-modal').style.display = 'none';
+        window.navigate('groupChat', { groupId: newGroup.id });
+    }
+};
+
 // Close dropdown if clicking outside
 document.addEventListener('click', (e) => {
     const dropdown = document.getElementById('profile-dropdown');
@@ -117,20 +153,75 @@ document.addEventListener('click', (e) => {
 
 // Init
 document.addEventListener('DOMContentLoaded', () => {
+    // Check local storage for existing guest session
+    const savedProfile = localStorage.getItem('smout_user_profile');
+    if (savedProfile) {
+        state.user = { name: JSON.parse(savedProfile).name || "Guest Explorer", tasteProfile: JSON.parse(savedProfile) };
+        state.history = JSON.parse(localStorage.getItem('smout_user_history')) || [];
+    }
+
+    // Load groups from local storage
+    const loadGroups = () => {
+        const savedGroups = localStorage.getItem('smout_groups');
+        if (savedGroups) {
+            state.groups = JSON.parse(savedGroups);
+        } else {
+            // Mock initial groups if empty
+            state.groups = [
+                {
+                    id: 'g1', name: 'Weekend Squad', members: [{ name: 'Alex' }, { name: 'Sam' }],
+                    chat: [{ sender: 'Alex', msg: 'Where are we going this weekend?', time: '10:00 AM' }], picks: []
+                },
+                {
+                    id: 'g2', name: 'Work Colleagues', members: [{ name: 'David' }, { name: 'Sarah' }, { name: 'Mike' }, { name: 'Emma' }],
+                    chat: [{ sender: 'David', msg: "Let's finalize the team dinner for Friday.", time: '09:00 AM' }], picks: []
+                }
+            ];
+            localStorage.setItem('smout_groups', JSON.stringify(state.groups));
+        }
+    };
+    loadGroups();
+
+    // Listen for storage events for real-time cross-tab sync
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'smout_groups') {
+            state.groups = JSON.parse(e.newValue);
+            // Re-render current view if it depends on groups
+            if (state.currentView === 'dashboard' || state.currentView === 'groupChat') {
+                navigate(state.currentView, { groupId: window.currentGroupId });
+            }
+        }
+    });
+
+    window.joinGroup = (joinGroupId) => {
+        const group = state.groups.find(g => g.id === joinGroupId);
+        if (group) {
+            if (!group.members.some(m => m.name === state.user.name)) {
+                group.members.push({ name: state.user.name, tasteProfile: state.user.tasteProfile });
+                group.chat.push({ sender: 'System', msg: `${state.user.name} joined the group!`, time: 'Now', isSystem: true });
+                localStorage.setItem('smout_groups', JSON.stringify(state.groups));
+            }
+            navigate('groupChat', { groupId: joinGroupId });
+        } else {
+            alert('Group not found!');
+            navigate('dashboard');
+        }
+    };
+
     // Intercept Join Links
     const hash = window.location.hash;
     if (hash.startsWith('#join?groupId=')) {
         const joinGroupId = hash.split('=')[1];
-        alert(`You have been invited to join group: ${joinGroupId}! Please sign up or log in to continue.`);
-        navigate('signup');
-        return;
-    }
+        window.location.hash = ''; // Clear hash
 
-    // Check local storage for existing guest session
-    const savedProfile = localStorage.getItem('smout_user_profile');
-    if (savedProfile) {
-        state.user = { name: "Guest Explorer", tasteProfile: JSON.parse(savedProfile) };
-        state.history = JSON.parse(localStorage.getItem('smout_user_history')) || [];
+        if (state.user) {
+            window.joinGroup(joinGroupId);
+            return;
+        } else {
+            localStorage.setItem('smout_pending_join', joinGroupId);
+            navigate('signup');
+            return;
+        }
     }
 
     if (state.user && state.user.tasteProfile) {
