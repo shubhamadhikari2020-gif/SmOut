@@ -94,6 +94,10 @@ export const TranslatorView = {
         const micErrorModal = container.querySelector('#mic-error-modal');
         const retryMicBtn = container.querySelector('#retry-mic-btn');
 
+        // For production, this will automatically use the current domain.
+        // If your backend is on a different server, you can change this to your Render URL.
+        const API_BASE_URL = window.location.origin;
+
         // Session ID bound to user name for memory context
         const sessionId = "session_" + (state.user && state.user.name ? state.user.name.replace(/\s/g, '') : "guest") + "_" + Math.floor(Math.random() * 10000);
 
@@ -168,7 +172,7 @@ export const TranslatorView = {
 
             try {
                 // Ensure request goes to python backend port 8000
-                const response = await fetch('/api/translate/voice', {
+                const response = await fetch(`${API_BASE_URL}/api/translate/voice`, {
                     method: 'POST',
                     body: formData
                 });
@@ -200,7 +204,7 @@ export const TranslatorView = {
             formData.append('session_id', sessionId);
 
             try {
-                const response = await fetch('/api/translate/text', {
+                const response = await fetch(`${API_BASE_URL}/api/translate/text`, {
                     method: 'POST',
                     body: formData
                 });
@@ -248,7 +252,7 @@ export const TranslatorView = {
 
         async function fetchHistory() {
             try {
-                const response = await fetch(`/api/session/${sessionId}`);
+                const response = await fetch(`${API_BASE_URL}/api/session/${sessionId}`);
                 const data = await response.json();
                 
                 historyList.innerHTML = '';

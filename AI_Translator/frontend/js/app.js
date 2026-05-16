@@ -11,6 +11,10 @@ const historyList = document.getElementById('history-list');
 const micErrorModal = document.getElementById('mic-error-modal');
 const retryMicBtn = document.getElementById('retry-mic-btn');
 
+// For production, this will automatically use the current domain.
+// If your backend is on a different server, you can change this to your Render URL.
+const API_BASE_URL = window.location.origin;
+
 // We use a constant session ID for the demo
 const sessionId = "demo_session_" + Math.floor(Math.random() * 10000);
 
@@ -76,7 +80,7 @@ async function sendAudioToServer() {
     formData.append('session_id', sessionId);
 
     try {
-        const response = await fetch('http://localhost:8000/api/translate/voice', {
+        const response = await fetch(`${API_BASE_URL}/api/translate/voice`, {
             method: 'POST',
             body: formData
         });
@@ -108,14 +112,14 @@ function displayResults(data) {
     
     // Play audio automatically
     if (data.audio_url) {
-        audioPlayer.src = "http://localhost:8000" + data.audio_url;
+        audioPlayer.src = API_BASE_URL + data.audio_url;
         audioPlayer.play().catch(e => console.log("Auto-play prevented by browser"));
     }
 }
 
 async function fetchHistory() {
     try {
-        const response = await fetch(`http://localhost:8000/api/session/${sessionId}`);
+        const response = await fetch(`${API_BASE_URL}/api/session/${sessionId}`);
         const data = await response.json();
         
         historyList.innerHTML = '';
