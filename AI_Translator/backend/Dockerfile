@@ -10,7 +10,7 @@ WORKDIR /app
 COPY . /app/
 
 # Install Python dependencies
-RUN pip install --no-cache-dir -r AI_Translator/requirements.txt
+RUN pip install --no-cache-dir -r AI_Translator/backend/requirements.txt
 
 # Set the working directory to where the backend python module starts
 WORKDIR /app/AI_Translator
