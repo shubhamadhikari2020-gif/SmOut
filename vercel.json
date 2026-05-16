@@ -1,0 +1,14 @@
+{
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/Zentro/index.html"
+    },
+    {
+      "source": "/translator",
+      "destination": "/AI_Translator/frontend/index.html"
+    }
+  ],
+  "cleanUrls": true,
+  "trailingSlash": true
+}
