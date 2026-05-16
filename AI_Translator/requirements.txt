@@ -1,0 +1,44 @@
+# Core Framework
+fastapi==0.104.1
+uvicorn==0.24.0
+python-multipart==0.0.6
+python-dotenv==1.0.0
+
+# NLP & Translation
+transformers
+torch
+datasets
+sentencepiece
+google-generativeai
+
+# Speech Recognition & Processing
+openai-whisper
+librosa
+soundfile
+pydub
+scipy
+
+# Text-to-Speech
+gTTS
+pyttsx3
+
+# Image Processing & OCR
+paddleocr
+pillow
+opencv-python
+pytesseract
+
+# Utilities
+requests
+numpy
+pandas
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# Logging & Testing
+python-json-logger
+pytest
+pytest-asyncio
+black
+flake8
+mypy

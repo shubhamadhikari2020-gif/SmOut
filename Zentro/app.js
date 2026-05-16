@@ -15,6 +15,7 @@ import { GroupChatView } from './views/GroupChatView.js';
 import { PlannerView } from './views/PlannerView.js';
 import { PlaceView } from './views/PlaceView.js';
 import { ProfileView } from './views/ProfileView.js';
+import { TranslatorView } from './views/TranslatorView.js';
 
 const routes = {
     'home': HomeView,
@@ -24,7 +25,8 @@ const routes = {
     'groupChat': GroupChatView,
     'planner': PlannerView,
     'place': PlaceView,
-    'profile': ProfileView
+    'profile': ProfileView,
+    'translator': TranslatorView
 };
 
 function generateMiniMapCard(place) {
@@ -63,6 +65,7 @@ function navigate(viewName, data = {}) {
                 ${state.user && state.user.tasteProfile ?
             `<button class="btn btn-secondary" onclick="window.navigate('dashboard')">Dashboard</button>
                      <button class="btn btn-primary" onclick="window.navigate('planner')">Smart Planner</button>
+                     <button class="btn btn-primary" style="background: linear-gradient(135deg, #8b5cf6, #ec4899); border: none;" onclick="window.navigate('translator')">🎙️ AI Translator</button>
                      
                      <div style="position: relative; margin-left: 0.5rem;" id="nav-profile-container">
                          <div id="profile-icon" onclick="document.getElementById('profile-dropdown').style.display = document.getElementById('profile-dropdown').style.display === 'block' ? 'none' : 'block'" style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #ec4899); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem; cursor: pointer; box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>NexGen Translator</h1>
+            <p>Emotion-Aware Voice Translation</p>
+        </header>
+
+        <main>
+            <div class="controls">
+                <select id="target-language">
+                    <option value="english">English</option>
+                    <option value="hindi">Hindi</option>
+                    <option value="telugu">Telugu</option>
+                    <option value="tamil">Tamil</option>
+                </select>
+                <button id="record-btn" class="record-btn">
+                    <span class="icon">🎙️</span> Start Recording  
+                </button>
+            </div>
+
+            <div class="status-indicator" id="status-indicator">Ready to record</div>
+
+            <div id="mic-error-modal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <h2>🎙️ Microphone Blocked</h2>
+                    <p>We need access to your microphone to translate your voice.</p>
+                    <p id="mic-error-desc" style="color: #ef4444; font-size: 0.85rem; font-family: monospace; margin: 0;"></p>
+                    <div class="instructions">
+                        <p><strong>How to fix:</strong></p>
+                        <ol>
+                            <li>Click the <strong>Lock icon 🔒</strong> next to "localhost" in your browser's URL bar.</li>
+                            <li>Find <strong>Microphone</strong> and toggle it to <strong>Allow</strong>.</li>
+                            <li>Reload the page or click Retry below!</li>
+                        </ol>
+                    </div>
+                    <button id="retry-mic-btn" class="record-btn" style="width: 100%; justify-content: center;">Retry Microphone</button>
+                </div>
+            </div>
+
+            <div class="results" id="results-container" style="display: none;">
+                <div class="card source-card">
+                    <h3>You said:</h3>
+                    <p id="original-text"></p>
+                    <span class="badge" id="detected-lang"></span>
+                </div>
+
+                <div class="card translation-card">
+                    <h3>Translation:</h3>
+                    <p id="translation-text"></p>
+                    <span class="badge emotion-badge" id="detected-emotion"></span>
+                </div>
+                
+                <audio id="audio-player" controls style="display:none;"></audio>
+            </div>
+            
+            <div class="history-container">
+                <h3>Session History</h3>
+                <div class="history-list" id="history-list"></div>
+            </div>
+        </main>
+    </div>
+    <script src="js/app.js"></script>
+</body>
+</html>

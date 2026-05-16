@@ -1,4 +1,10 @@
 /* SmOut Design System & Tokens - Pastel Theme */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
 :root {
     /* Color Palette - Soft Pastel Cityscape */
     --color-bg-base: #F9ECEC; /* Very light soft pink/peach */
