@@ -23,9 +23,9 @@ RUN if [ -f requirements.txt ]; then \
 CMD if [ -f main.py ]; then \
         uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}; \
     elif [ -f backend/main.py ]; then \
-        uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8000}; \
+        uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}; \
     elif [ -d AI_Translator ]; then \
-        cd AI_Translator && uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8000}; \
+        cd AI_Translator/backend && uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}; \
     else \
         echo "Error: Could not find main.py or backend module" && exit 1; \
     fi

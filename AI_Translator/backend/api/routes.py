@@ -3,10 +3,10 @@ from fastapi.responses import FileResponse, JSONResponse
 import os
 import time
 import shutil
-from backend.core.memory import memory_db, Message
-from backend.services.asr_service import transcribe_audio
-from backend.services.llm_service import translate_and_analyze
-from backend.services.tts_service import generate_tts
+from core.memory import memory_db, Message
+from services.asr_service import transcribe_audio
+from services.llm_service import translate_and_analyze
+from services.tts_service import generate_tts
 
 router = APIRouter()
 

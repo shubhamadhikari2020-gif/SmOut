@@ -1,5 +1,5 @@
 # Start the backend API
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd C:\Users\BSR\Desktop\SmOut\SmOut\AI_Translator; .\venv\Scripts\Activate.ps1; python -m uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd C:\Users\BSR\Desktop\SmOut\SmOut\AI_Translator\backend; ..\venv\Scripts\Activate.ps1; python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
 
 # Start a simple HTTP server for the frontend
 Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd C:\Users\BSR\Desktop\SmOut\SmOut\AI_Translator\frontend; python -m http.server 3000"
