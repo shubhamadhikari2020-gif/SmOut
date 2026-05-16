@@ -17,8 +17,15 @@ RUN if [ -f requirements.txt ]; then \
     fi
 
 # Flexible Start: Detects location and runs uvicorn properly
-CMD if [ -f backend/main.py ]; then \
+# 1. If we are already in the backend folder (main.py is here)
+# 2. If we are in the root and 'backend' is a subfolder
+# 3. If we are in the root and 'AI_Translator' is a subfolder
+CMD if [ -f main.py ]; then \
+        uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}; \
+    elif [ -f backend/main.py ]; then \
         uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8000}; \
-    else \
+    elif [ -d AI_Translator ]; then \
         cd AI_Translator && uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8000}; \
+    else \
+        echo "Error: Could not find main.py or backend module" && exit 1; \
     fi
