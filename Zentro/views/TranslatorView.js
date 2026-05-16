@@ -8,7 +8,7 @@ export const TranslatorView = {
                 
                 <div class="glass-card" style="padding: 2.5rem; text-align: center;">
                     <header style="margin-bottom: 2.5rem;">
-                        <h1 style="font-size: 2.8rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #3b82f6, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">NexGen Translator</h1>
+                        <h1 style="font-size: 2.8rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #3b82f6, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">SmOut Translation</h1>
                         <p style="color: var(--color-text-secondary); font-size: 1.1rem;">Emotion-Aware Voice Translation</p>
                     </header>
 

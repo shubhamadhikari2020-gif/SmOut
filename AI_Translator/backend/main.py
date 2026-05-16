@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 import os
 from backend.api.routes import router
 
-app = FastAPI(title="SmOut & AI Translator API")
+app = FastAPI(title="SmOut Translation API")
 
 app.add_middleware(
     CORSMiddleware,
