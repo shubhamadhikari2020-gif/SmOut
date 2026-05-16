@@ -168,7 +168,7 @@ export const TranslatorView = {
 
             try {
                 // Ensure request goes to python backend port 8000
-                const response = await fetch('http://localhost:8000/api/translate/voice', {
+                const response = await fetch('/api/translate/voice', {
                     method: 'POST',
                     body: formData
                 });
@@ -200,7 +200,7 @@ export const TranslatorView = {
             formData.append('session_id', sessionId);
 
             try {
-                const response = await fetch('http://localhost:8000/api/translate/text', {
+                const response = await fetch('/api/translate/text', {
                     method: 'POST',
                     body: formData
                 });
@@ -241,14 +241,14 @@ export const TranslatorView = {
             }, 25);
             
             if (data.audio_url) {
-                audioPlayer.src = "http://localhost:8000" + data.audio_url;
+                audioPlayer.src = data.audio_url;
                 audioPlayer.play().catch(e => console.log("Auto-play prevented by browser"));
             }
         }
 
         async function fetchHistory() {
             try {
-                const response = await fetch(`http://localhost:8000/api/session/${sessionId}`);
+                const response = await fetch(`/api/session/${sessionId}`);
                 const data = await response.json();
                 
                 historyList.innerHTML = '';
